@@ -16,11 +16,20 @@ use std::sync::Arc;
 
 use serenity::async_trait;
 use serenity::client::bridge::gateway::ShardManager;
-use serenity::framework::standard::macros::group;
-use serenity::framework::StandardFramework;
+use serenity::framework::standard::macros::{group, help};
+use serenity::framework::standard::{
+    help_commands,
+    Args,
+    CommandGroup,
+    CommandResult,
+    HelpOptions,
+    StandardFramework,
+};
 use serenity::http::Http;
+use serenity::model::channel::{Message};
 use serenity::model::event::ResumedEvent;
 use serenity::model::gateway::Ready;
+use serenity::model::id::UserId;
 use serenity::prelude::*;
 use tracing::{error, info};
 
@@ -51,6 +60,22 @@ impl EventHandler for Handler {
 #[commands(multiply, ping, quit)]
 struct General;
 
+#[help]
+#[individual_command_tip = "Welcome to Navi, the \"Hey Listen\" bot."]
+#[lacking_permissions = "Hide"]
+#[lacking_role = "Hide"]
+async fn navi_help(
+    context: &Context,
+    msg: &Message,
+    args: Args,
+    help_options: &'static HelpOptions,
+    groups: &[&'static CommandGroup],
+    owners: HashSet<UserId>,
+) -> CommandResult {
+    let _ = help_commands::with_embeds(context, msg, args, help_options, groups, owners).await;
+    Ok(())
+}
+
 #[tokio::main]
 async fn main() {
     // This will load the environment variables located at `./.env`, relative to
@@ -80,7 +105,7 @@ async fn main() {
 
     // Create the framework
     let framework =
-        StandardFramework::new().configure(|c| c.owners(owners).prefix("~")).group(&GENERAL_GROUP);
+        StandardFramework::new().configure(|c| c.owners(owners).prefix("~")).help(&NAVI_HELP).group(&GENERAL_GROUP);
 
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
