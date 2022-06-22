@@ -1,0 +1,29 @@
+[package]
+name = "navi"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+dotenv = "0.15"
+tokio = { version = "1.19.2", features = ["full"] }
+tracing = "0.1.23"
+tracing-subscriber = "0.2"
+
+[dependencies.serenity]
+default-features = false
+features = [
+    "builder",
+    "cache",
+    "chrono",
+    "client",
+    "framework",
+    "gateway",
+    "http",
+    "model",
+    "standard_framework",
+    "utils",
+    "rustls_backend",
+]
+version = "0.11"
